@@ -10,7 +10,8 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobStorageLocation",
-				"fileName": "backgrounddefault2.jpb",
+				"fileName": "backgrounddefault2.jpg",
+				"folderPath": "dir1",
 				"container": "folder2"
 			}
 		}
