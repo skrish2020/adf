@@ -1,0 +1,76 @@
+{
+	"name": "dataflow1",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "dept",
+						"type": "DatasetReference"
+					},
+					"name": "deptStream"
+				},
+				{
+					"dataset": {
+						"referenceName": "emp",
+						"type": "DatasetReference"
+					},
+					"name": "empStream"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "joined_emp_dept",
+						"type": "DatasetReference"
+					},
+					"name": "output"
+				}
+			],
+			"transformations": [
+				{
+					"name": "joinempdept"
+				},
+				{
+					"name": "compose1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          deptId as string,",
+				"          deptName as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> deptStream",
+				"source(output(",
+				"          empId as string,",
+				"          name as string,",
+				"          country as string,",
+				"          dept as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> empStream",
+				"compose(composition: 'undefined') ~> compose1@(temporary)",
+				"empStream, deptStream join(dept == deptId,",
+				"     joinType:'inner',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> joinempdept",
+				"joinempdept sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:['emp_dept.csv'],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     mapColumn(",
+				"          name,",
+				"          country,",
+				"          deptName",
+				"     ),",
+				"     partitionBy('hash', 1)) ~> output"
+			]
+		}
+	}
+}
