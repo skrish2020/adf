@@ -31,9 +31,6 @@
 			"transformations": [
 				{
 					"name": "joinempdept"
-				},
-				{
-					"name": "compose1"
 				}
 			],
 			"scriptLines": [
@@ -53,7 +50,6 @@
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false) ~> empStream",
-				"compose(composition: 'undefined') ~> compose1@(temporary)",
 				"empStream, deptStream join(dept == deptId,",
 				"     joinType:'inner',",
 				"     matchType:'exact',",
